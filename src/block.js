@@ -25,27 +25,19 @@ class Block {
     
     /**
      *  validate() method will validate if the block has been tampered or not.
-     *  Been tampered means that someone from outside the application tried to change
-     *  values in the block data as a consecuence the hash of the block should be different.
-     *  Steps:
-     *  1. Return a new promise to allow the method be called asynchronous.
-     *  2. Save the in auxiliary variable the current hash of the block (`this` represent the block object)
-     *  3. Recalculate the hash of the entire block (Use SHA256 from crypto-js library)
-     *  4. Compare if the auxiliary hash value is different from the calculated one.
-     *  5. Resolve true or false depending if it is valid or not.
-     *  Note: to access the class values inside a Promise code you need to create an auxiliary value `let self = this;`
+     *  compare the hash value to the current hash of the
      */
     validate() {
         let self = this;
         return new Promise((resolve, reject) => {
-            // Save in auxiliary variable the current block hash
-                                            
-            // Recalculate the hash of the Block
-            // Comparing if the hashes changed
-            // Returning the Block is not valid
-            
-            // Returning the Block is valid
-
+            var validHash = this.hash;
+            var curHash = SHA256(JSON.stringify(this));
+            if (validHash == curHash) {
+                resolve(true);
+            }
+            else{
+                resolve(false);
+            }
         });
     }
 
@@ -62,11 +54,22 @@ class Block {
         // Getting the encoded data saved in the Block
         // Decoding the data to retrieve the JSON representation of the object
         // Parse the data to an object to be retrieve.
-
-        // Resolve with the data if the object isn't the Genesis block
-
+        let self = this;
+        return new Promise((resolve, reject) => {
+            decodedData = JSON.parse(hex2ascii(this.body))
+            if (decodedData) {
+                if (this.height == 0) {
+                    resolve();
+                }
+                else {
+                    resolve(decodedData);
+                }
+            }
+            else {
+                reject(new Error('get block data failed'));
+            }
+        });
     }
-
 }
 
 module.exports.Block = Block;                    // Exposing the Block class as a module

@@ -11,6 +11,7 @@
 const SHA256 = require('crypto-js/sha256');
 const BlockClass = require('./block.js');
 const bitcoinMessage = require('bitcoinjs-message');
+const e = require('express');
 
 class Blockchain {
 
@@ -64,7 +65,17 @@ class Blockchain {
     _addBlock(block) {
         let self = this;
         return new Promise(async (resolve, reject) => {
-           
+            block.timeStamp = new Date().getTime().toString.slice(0, -3);
+            var prevBlock = this.getBlockByHash(this.previousBlockHash);
+            if (prevBlock.height == this.height) {
+                this.height++;
+                block.height = this.height;
+                this.chain.push(block);
+                resolve(block);
+            }
+            else {
+                reject(new Error("incorrect prev block hash"));
+            }
         });
     }
 
@@ -78,7 +89,7 @@ class Blockchain {
      */
     requestMessageOwnershipVerification(address) {
         return new Promise((resolve) => {
-            
+            resolve( `${address}:${new Date().getTime().toString().slice(0,-3)}:starRegistry`)
         });
     }
 
@@ -102,6 +113,8 @@ class Blockchain {
     submitStar(address, message, signature, star) {
         let self = this;
         return new Promise(async (resolve, reject) => {
+            let messageTime = arseInt(message.split(':')[1])
+            let currentTime = parseInt(new Date().getTime().toString().slice(0, -3));
             
         });
     }
