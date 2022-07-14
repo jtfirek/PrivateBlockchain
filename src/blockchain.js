@@ -66,11 +66,11 @@ class Blockchain {
         let self = this;
         return new Promise(async (resolve, reject) => {
             block.timeStamp = new Date().getTime().toString.slice(0, -3);
-            var prevBlock = this.getBlockByHash(this.previousBlockHash);
-            if (prevBlock.height == this.height) {
-                this.height++;
-                block.height = this.height;
-                this.chain.push(block);
+            var prevBlock = self.getBlockByHash(self.previousBlockHash);
+            if (prevBlock.height == self.height) {
+                self.height++;
+                block.height = self.height;
+                self.chain.push(block);
                 resolve(block);
             }
             else {
@@ -113,9 +113,18 @@ class Blockchain {
     submitStar(address, message, signature, star) {
         let self = this;
         return new Promise(async (resolve, reject) => {
-            let messageTime = arseInt(message.split(':')[1])
+            let messageTime = parseInt(message.split(':')[1])
             let currentTime = parseInt(new Date().getTime().toString().slice(0, -3));
-            
+            if (currentTime - messageTime < 5) {
+                bitcoinMessage.verify(message, address, signature);
+                //passing in the data as json format
+                newBlock = new Block({"star":star,"owner":address});
+                self._addBlock(newBlock);
+                resolve(newBlock);
+            }
+            else {
+                reject(new Error("Too much time has elapsed"));
+            }
         });
     }
 
@@ -128,7 +137,10 @@ class Blockchain {
     getBlockByHash(hash) {
         let self = this;
         return new Promise((resolve, reject) => {
-           
+            let result = self.chain.filter(obj => {
+                return obj.hash === hash;
+            });
+            resolve(result);
         });
     }
 
@@ -150,7 +162,7 @@ class Blockchain {
     }
 
     /**
-     * This method will return a Promise that will resolve with an array of Stars objects existing in the chain 
+     * This method will return a Promise that will resolvse with an array of Stars objects existing in the chain 
      * and are belongs to the owner with the wallet address passed as parameter.
      * Remember the star should be returned decoded.
      * @param {*} address 
@@ -159,7 +171,13 @@ class Blockchain {
         let self = this;
         let stars = [];
         return new Promise((resolve, reject) => {
-            
+            for (let i = 0; i < self.chain.length; i++) {
+                let curData = self.chain[i].getBData();
+                if (curData.address === address){
+                    stars.push(curData);
+                }
+            }
+            resolve(stars);
         });
     }
 
@@ -173,8 +191,15 @@ class Blockchain {
         let self = this;
         let errorLog = [];
         return new Promise(async (resolve, reject) => {
-            
+            for (let i = 0; i < self.chain.length(); i++) {
+                let curBlock = self.chain[i];
+                if (curBlock.validate() === false) {
+                    errorLog.push(`error validating block ${i}`);
+                }
+            }
+            return errorLog;
         });
+        
     }
 
 }

@@ -1,18 +1,19 @@
 # Private Blockchain Application
 
-This my first blockchain development project. I have created a simple blockchain application using node.js. The application allows users to register stars on my custom blockchain
+You are starting your journey as a Blockchain Developer, this project allows you to demonstrate
+that you are familiarized with the fundamentals concepts of a Blockchain platform.
+Concepts like:
+    - Block
+    - Blockchain
+    - Wallet
+    - Blockchain Identity
+    - Proof of Existance
 
-### Details
-The application creates a genesis block when we run the application
-Star information will be in this format
-    The Start information will be formed in this format:
-    ```json
-        "star": {
-            "dec": "68° 52' 56.9",
-            "ra": "16h 29m 1.0s",
-            "story": "Testing the story 4"
-		}
-    ```
+Are some of the most important components in the Blockchain Framework that you will need to describe and also
+why not? Implement too.
+
+In this project you will have a boilerplate code with a REST Api already setup to expose some of the functionalities
+you will implement in your private blockchain.
 
 ## What problem will you solve implementing this private Blockchain application?
 
