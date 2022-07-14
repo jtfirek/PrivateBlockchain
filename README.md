@@ -1,10 +1,11 @@
 # Private Blockchain Application
 
-This my first blockchain development project. I have created a simple blockchain application using node.js. The application allows users to register stars on my custom blockchain
+This my first blockchain development project. I have created a simple blockchain application using node.js.
+The application allows users to register stars on my custom blockchain
 
 ### Details
-The application creates a genesis block when we run the application
-Star information will be in this format
+The application creates a genesis block when we run the application. 
+Star information will be in this format.
     The Start information will be formed in this format:
     ```json
         "star": {
