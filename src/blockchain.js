@@ -66,7 +66,10 @@ class Blockchain {
         let self = this;
         return new Promise(async (resolve, reject) => {
             try {
-                console.log("adding block")
+                const errorLog = await this.validateChain();
+                if (errorLog.length > 0) {
+                    throw new Exception();
+                }
                 const newHeight = this.height + 1;
                 //no previous hash for genesis block
                 if (this.chainHeight > 0) {
@@ -78,7 +81,6 @@ class Blockchain {
                 block.hash = SHA256(JSON.stringify(block)).toString();
                 this.height = newHeight
                 this.chain.push(block);
-                console.log(block);
                 resolve(block);
             } catch (error) {
                 reject(error);
@@ -130,7 +132,7 @@ class Blockchain {
                 resolve(newBlock);
             }
             else {
-                reject(new Error("Too much time has elapsed"));
+                reject("Too much time has elapsed");
             }
         });
     }
@@ -196,15 +198,18 @@ class Blockchain {
      */
     validateChain() {
         let self = this;
-        let errorLog = [];
+        
         return new Promise(async (resolve, reject) => {
-            for (let i = 0; i < this.chain.length(); i++) {
-                let curBlock = this.chain[i];
-                if (curBlock.validate() === false) {
+            let errorLog = [];
+            let curChain = this.chain
+            const curHeight = this.height;
+            for (let i = 0; i < curHeight; i++) {
+                let curBlock = this.curChain[i];
+                if (await curBlock.validate() === false) {
                     errorLog.push(`error validating block ${i}`);
                 }
             }
-            return errorLog;
+            resolve(errorLog);
         });
         
     }

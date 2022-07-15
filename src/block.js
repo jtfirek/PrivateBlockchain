@@ -30,13 +30,16 @@ class Block {
     validate() {
         let self = this;
         return new Promise((resolve, reject) => {
-            var validHash = this.hash;
-            var curHash = SHA256(JSON.stringify(this));
-            if (validHash == curHash) {
+            const validHash = this.hash;
+            const orginHash = self.hash;
+            self.hash = null;
+            const curHash = SHA256(JSON.stringify(this)).toString();
+            self.hash = orginHash;
+            if (validHash === curHash) {
                 resolve(true);
             }
             else{
-                resolve(false);
+                resolve(Error(false));
             }
         });
     }
@@ -56,14 +59,12 @@ class Block {
         // Parse the data to an object to be retrieve.
         let self = this;
         return new Promise((resolve, reject) => {
-            decodedData = JSON.parse(hex2ascii(this.body))
-            if (decodedData) {
-                if (this.height == 0) {
-                    resolve();
-                }
-                else {
-                    resolve(decodedData);
-                }
+            if (this.height === 0) {
+                resolve('No info in Genesis Block');
+            }
+            decodedData = JSON.parse(hex2ascii(this.body));
+            if (decodeData) {
+                resolve(decodedData);
             }
             else {
                 reject(new Error('get block data failed'));
